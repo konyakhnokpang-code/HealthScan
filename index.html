@@ -1,25 +1,31 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HealthScan AI — iOS Elite Vision & Chat Edition</title>
+    <title>Mei-scan AI — Elite Clinical Intelligence Platform</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/html5-qrcode"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        .ios-page {
-            transition: transform 0.45s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease;
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .ios-tab-panel {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
         }
-        .ios-slide-in {
-            animation: iosSlideIn 0.45s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        .ios-spring-card {
+            animation: iosSpring 0.45s cubic-bezier(0.25, 1.1, 0.4, 1) forwards;
         }
-        @keyframes iosSlideIn {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        @keyframes iosSpring {
+            from { transform: scale(0.96) translateY(15px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
         }
-        .ios-sheet {
-            transition: transform 0.4s cubic-bezier(0.3, 0.85, 0.35, 1);
+        .ios-sheet-rise {
+            animation: iosSheetRise 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes iosSheetRise {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
         }
     </style>
 
@@ -44,7 +50,6 @@
 
         let currentUser = null;
 
-        // ✅ YOUR INDEPENDENT GEMINI API KEY APPLIED SECURELY NATIVELY HERE BELOW
         window.GEMINI_API_KEY = "AIzaSyC2dz774uwQFfhBPCkQqGD99Bi0Ce97fkc";
 
         window.loginWithGoogle = async () => {
@@ -82,7 +87,7 @@
                     conditions: conditions,
                     customNotes: customNotes
                 }, { merge: true });
-                showToast("Profile & parameters updated natively!");
+                showToast("Profile metrics synchronized securely.");
             } catch (err) { console.error(err); }
         };
 
@@ -113,435 +118,184 @@
         }
 
         function renderHistoryUI(historyArray) {
-            const lists = [document.getElementById('dashboard-history-list'), document.getElementById('results-history-list')];
-            lists.forEach(list => {
-                if (!list) return;
-                list.innerHTML = "";
-                if (historyArray.length > 0) {
-                    [...historyArray].reverse().slice(0, 5).forEach(item => {
-                        const badgeColor = item.verdict === 'SAFE' ? 'bg-emerald-100 text-emerald-700' : (item.verdict === 'CAUTION' ? 'bg-amber-100 text-amber-700' : 'bg-rose-100 text-rose-700');
-                        list.innerHTML += `
-                            <div class="flex justify-between items-center bg-slate-50/80 p-3 rounded-xl border border-slate-200 shadow-sm">
-                                <div class="flex flex-col">
-                                    <span class="font-bold text-slate-800 text-sm">${item.name}</span>
-                                    <span class="text-[10px] text-slate-400">${item.timestamp}</span>
-                                </div>
-                                <span class="px-2.5 py-1 rounded-lg text-xs font-black ${badgeColor}">${item.verdict}</span>
-                            </div>`;
-                    });
-                } else {
-                    list.innerHTML = `<p class="text-xs text-slate-400 italic py-2 text-center">No recent entries.</p>`;
-                }
-            });
+            const list = document.getElementById('dashboard-history-list');
+            if (!list) return;
+            list.innerHTML = "";
+            if (historyArray.length > 0) {
+                [...historyArray].reverse().map(item => {
+                    const badgeColor = item.verdict === 'SAFE' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : (item.verdict === 'CAUTION' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-rose-50 text-rose-700 border-rose-200');
+                    list.innerHTML += `
+                        <div class="flex justify-between items-center bg-white p-3.5 rounded-2xl border border-slate-100 shadow-xs">
+                            <div class="flex flex-col">
+                                <span class="font-bold text-slate-800 text-sm tracking-tight">${item.name}</span>
+                                <span class="text-[10px] text-slate-400 font-medium">${item.timestamp}</span>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${badgeColor}">${item.verdict}</span>
+                        </div>`;
+                });
+            } else {
+                list.innerHTML = `<p class="text-xs text-slate-400 italic py-4 text-center">No structural logs filed yet.</p>`;
+            }
         }
     </script>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col justify-start items-center p-0 sm:p-4 selection:bg-emerald-200">
+<body class="bg-slate-50 text-slate-900 min-h-screen flex flex-col justify-start items-center p-0 selection:bg-emerald-200">
 
-    <div id="auth-screen" class="max-w-md w-full min-h-screen sm:min-h-0 text-center space-y-6 bg-white p-8 rounded-none sm:rounded-3xl border-0 sm:border border-slate-200 shadow-2xl flex flex-col justify-center ios-slide-in">
-        <div class="space-y-2">
-            <div class="inline-flex p-3 bg-emerald-50 rounded-2xl text-3xl shadow-inner">🥗</div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight">HEALTHSCAN AI</h1>
-            <p class="text-xs text-slate-500 max-w-xs mx-auto">Computer vision health matrix and intelligent iOS interface assistant.</p>
+    <div id="auth-screen" class="max-w-md w-full min-h-screen text-center space-y-6 bg-white p-8 flex flex-col justify-center items-center ios-spring-card">
+        <div class="space-y-1.5">
+            <div class="inline-flex p-3.5 bg-slate-50 rounded-2xl border border-slate-100 shadow-xs text-2xl">🥗</div>
+            <h1 class="text-2xl font-extrabold tracking-tighter text-slate-900">MEI-SCAN AI</h1>
+            <p class="text-xs text-slate-400 max-w-xs mx-auto font-medium">Clinical Bio-Metric Analysis Platform & Personalized Dietary System</p>
         </div>
-        <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=400&q=80" class="w-full h-44 object-cover rounded-2xl border border-slate-100" alt="Nutrition Asset">
+        <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=400&q=80" class="w-full h-44 object-cover rounded-2xl border border-slate-100" alt="Platform Banner">
         <button onclick="loginWithGoogle()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer text-sm transition-all active:scale-95">
             <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5" alt="Google">
-            Sign In with Google Account
+            Sign In securely with Google
         </button>
     </div>
 
-    <div id="main-app-container" class="hidden max-w-md w-full min-h-screen flex flex-col space-y-4 p-4 ios-slide-in">
+    <div id="main-app-container" class="hidden max-w-md w-full min-h-screen flex flex-col pb-24 relative">
         
-        <header class="flex justify-between items-center bg-white/80 backdrop-blur-xl p-3 rounded-2xl border border-slate-200/60 shadow-sm sticky top-2 z-30">
+        <header class="flex justify-between items-center bg-white/90 backdrop-blur-xl p-4 border-b border-slate-100 sticky top-0 z-30 shadow-xs">
             <div class="flex items-center gap-2.5">
-                <img id="user-avatar" class="w-9 h-9 rounded-full border-2 border-emerald-500 shadow-sm" src="" alt="Avatar">
-                <span id="user-name" class="text-sm font-black text-slate-800">Hi User</span>
+                <img id="user-avatar" class="w-8 h-8 rounded-full border border-slate-200" src="" alt="Avatar">
+                <span id="user-name" class="text-xs font-bold text-slate-700 tracking-tight">User Account</span>
             </div>
-            <button onclick="logoutUser()" class="text-xs bg-slate-100 hover:bg-rose-50 text-rose-600 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition cursor-pointer">Sign Out</button>
+            <div class="flex items-center gap-2">
+                <span class="text-xs font-extrabold tracking-tighter text-slate-900">MEI-SCAN AI</span>
+                <button onclick="logoutUser()" class="text-[10px] bg-slate-50 text-slate-500 font-bold px-2.5 py-1 rounded-lg border border-slate-200 cursor-pointer">Exit</button>
+            </div>
         </header>
 
-        <div id="page-1-dashboard" class="space-y-4 ios-page">
+        <main class="flex-1 p-4 overflow-x-hidden">
             
-            <section class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-                <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">👤 1. Set Parameters (Diet & 10 Conditions)</h2>
-                <div class="space-y-4">
-                    <div class="grid grid-cols-2 gap-2">
+            <div id="tab-home-viewport" class="space-y-4 ios-tab-panel">
+                
+                <section class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm text-center space-y-2">
+                    <h2 class="text-xl font-extrabold tracking-tight text-slate-900">Mei-scan AI</h2>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider max-w-xs mx-auto">Be Healthy. Scan Today and Stay Away from Any Problem.</p>
+                </section>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white p-3 rounded-2xl border border-slate-100 shadow-xs space-y-1.5">
+                        <span class="text-xs font-extrabold text-slate-800 tracking-tight block">🥗 Core Nutrition Guidelines</span>
+                        <div class="rounded-xl overflow-hidden aspect-video bg-slate-900 border border-slate-100">
+                            <iframe class="w-full h-full" src="https://www.youtube.com/embed/PjSAszK_pGA?controls=0&modestbranding=1" title="Nutrition Video" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    <div class="bg-white p-3 rounded-2xl border border-slate-100 shadow-xs space-y-1.5">
+                        <span class="text-xs font-extrabold text-slate-800 tracking-tight block">🧬 Metabolic Optimization</span>
+                        <div class="rounded-xl overflow-hidden aspect-video bg-slate-900 border border-slate-100">
+                            <iframe class="w-full h-full" src="https://www.youtube.com/embed/0aNNYEUARAk?controls=0&modestbranding=1" title="Diet Video" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="revealSlidingParameterSheet('health')" class="w-full bg-slate-900 text-white text-left p-6 rounded-2xl shadow-sm cursor-pointer transition transform active:scale-[0.99] flex justify-between items-center group">
+                    <div class="space-y-1">
+                        <span class="block text-lg font-bold tracking-tight">Health Situation</span>
+                        <span class="block text-xs text-slate-400 font-medium">Configure core clinical problems & vulnerabilities</span>
+                    </div>
+                    <span class="text-slate-400 group-hover:text-white transition-colors text-lg">→</span>
+                </button>
+
+                <button onclick="revealSlidingParameterSheet('diet')" class="w-full bg-slate-900 text-white text-left p-6 rounded-2xl shadow-sm cursor-pointer transition transform active:scale-[0.99] flex justify-between items-center group">
+                    <div class="space-y-1">
+                        <span class="block text-lg font-bold tracking-tight">Diet Control</span>
+                        <span class="block text-xs text-slate-400 font-medium">Set targeted dietary goals & wellness aspects</span>
+                    </div>
+                    <span class="text-slate-400 group-hover:text-white transition-colors text-lg">→</span>
+                </button>
+            </div>
+
+            <div id="tab-profile-viewport" class="hidden space-y-4 ios-tab-panel">
+                <section class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-4">
+                    <div>
+                        <h2 class="text-sm font-extrabold text-slate-800 tracking-tight">Clinical Parameters Configurator</h2>
+                        <p class="text-[11px] text-slate-400 font-medium">Modify baseline clinical diagnostic markers and requirements manually.</p>
+                    </div>
+                    <div class="space-y-4">
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Age Group</label>
-                            <select id="user-age" onchange="saveProfileToCloud()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 outline-none">
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wide mb-1.5">Age Demographics</label>
+                            <select id="user-age" onchange="saveProfileToCloud()" class="w-full p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs font-semibold text-slate-700 outline-none">
                                 <option value="adult">Adult (18-64)</option>
                                 <option value="child">Child (Under 18)</option>
                                 <option value="senior">Senior (65+)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Diet Mode</label>
-                            <select id="user-diet" onchange="saveProfileToCloud()" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-700 outline-none">
-                                <option value="none">Regular Balanced Diet</option>
-                                <option value="fat-loss">Fat Loss / Calorie Deficit</option>
-                                <option value="muscle-gain">Muscle Gain / High Protein</option>
-                                <option value="keto">Keto Diet (Ultra Low Carb)</option>
-                                <option value="low-purine">Low Purine (Uric Acid Control)</option>
-                                <option value="detox">Clean / Low Sodium</option>
-                            </select>
+                            <label class="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wide mb-1.5">✏️ Custom Requirements / Medical Notes</label>
+                            <textarea id="custom-health-notes" onblur="saveProfileToCloud()" rows="3" placeholder="Type custom health conditions, custom food bans, stomach vulnerabilities..." class="w-full p-3 bg-slate-50 border border-slate-100 rounded-xl text-xs text-slate-700 font-medium outline-none resize-none focus:bg-white shadow-inner"></textarea>
                         </div>
                     </div>
-                    
+                </section>
+            </div>
+
+            <div id="tab-history-viewport" class="hidden space-y-4 ios-tab-panel">
+                <section class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm space-y-3">
                     <div>
-                        <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Clinical Checklist (All 10 Parameters)</label>
-                        <div class="grid grid-cols-2 gap-2 mt-1">
-                            <label class="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 cursor-pointer">
-                                <input type="checkbox" onchange="saveProfileToCloud()" value="diabetes" class="w-4 h-4 accent-emerald-500"> Diabetes
-                            </label>
-                            <label class="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 cursor-pointer">
-                                <input type="checkbox" onchange="saveProfileToCloud()" value="hypertension" class="w-4 h-4 accent-emerald-500"> High BP
-                            </label>
-                            <label class="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 cursor-pointer">
-                                <input type="checkbox" onchange="saveProfileToCloud()" value="cholesterol" class="w-4 h-4 accent-emerald-500"> Cholesterol
-                            </label>
-                            <label class="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 cursor-pointer">
-                                <input type="checkbox" onchange="saveProfileToCloud()" value="gout" class="w-4 h-4 accent-emerald-500"> Uric Acid/Gout
-                            </label>
-                            <label class="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 cursor-pointer">
-                                <input type="checkbox" onchange="saveProfileToCloud()" value="celiac" class="w-4 h-4 accent-emerald-500"> Gluten Celiac
-                            </label>
-                            <label class="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 cursor-pointer">
-                                <input type="checkbox" onchange="saveProfileToCloud()" value="peanuts" class="w-4 h-4 accent-emerald-500"> Peanuts/Nuts
-                            </label>
-                            <label class="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 cursor-pointer">
-                                <input type="checkbox" onchange="saveProfileToCloud()" value="lactose" class="w-4 h-4 accent-emerald-500"> Lactose Intol.
-                            </label>
-                            <label class="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 cursor-pointer">
-                                <input type="checkbox" onchange="saveProfileToCloud()" value="soy" class="w-4 h-4 accent-emerald-500"> Soy Allergy
-                            </label>
-                            <label class="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 cursor-pointer">
-                                <input type="checkbox" onchange="saveProfileToCloud()" value="kidney" class="w-4 h-4 accent-emerald-500"> Kidney Health
-                            </label>
-                            <label class="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 cursor-pointer">
-                                <input type="checkbox" onchange="saveProfileToCloud()" value="acid" class="w-4 h-4 accent-emerald-500"> Acidity Risk
-                            </label>
-                        </div>
+                        <h2 class="text-sm font-extrabold text-slate-800 tracking-tight">Cloud Chronology Ledger</h2>
+                        <p class="text-[11px] text-slate-400 font-medium">Historical structural metrics safely locked inside your Firebase account cluster.</p>
                     </div>
+                    <div id="dashboard-history-list" class="space-y-2"></div>
+                </section>
+            </div>
+        </main>
 
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">✏️ Avoidance Notes or Dynamic Rules</label>
-                        <textarea id="custom-health-notes" onblur="saveProfileToCloud()" rows="2" placeholder="Example: allergic to strawberries, no chemical dyes, stomach ulcers..." class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-700 font-medium outline-none resize-none focus:border-emerald-500 shadow-inner"></textarea>
-                    </div>
-                </div>
-            </section>
-
-            <section class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
-                <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">🚀 2. Verification Interface Engines</h2>
-                <div class="flex flex-col gap-2">
-                    <button onclick="switchToPage2(true)" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3 rounded-2xl text-xs uppercase tracking-wider shadow-sm transition transform active:scale-95 cursor-pointer">
-                        📷 Launch Camera Scanner Viewport
-                    </button>
-                    <div class="flex gap-2">
-                        <input type="text" id="manual-search-p1" placeholder="Type name (Apple, Broccoli, Oreo)..." class="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium outline-none text-slate-700 focus:border-emerald-500">
-                        <button onclick="executeSearchFromP1()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-5 rounded-xl cursor-pointer">Search</button>
-                    </div>
-                </div>
-            </section>
-
-            <section class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
-                <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">⏳ Your Recent Scans</h2>
-                <div id="dashboard-history-list" class="space-y-2"></div>
-            </section>
-        </div>
-
-        <div id="page-2-analysis" class="hidden space-y-4 ios-page">
-            <div class="flex justify-between items-center">
-                <button onclick="switchToPage1()" class="bg-white text-slate-700 font-bold text-xs px-3 py-2 rounded-xl border border-slate-200 shadow-sm cursor-pointer transition active:scale-95">
-                    ← Back to Dashboard
+        <div id="camera-hardware-viewport" class="hidden fixed inset-0 bg-slate-900/95 backdrop-blur-md z-50 p-4 flex flex-col justify-between">
+            <div class="flex justify-between items-center text-white">
+                <span class="text-xs font-bold tracking-tight text-slate-400">Mei-scan Hardware Stream</span>
+                <button onclick="terminateCameraHardware()" class="bg-white/10 text-white font-bold text-xs px-3 py-1.5 rounded-xl cursor-pointer">Dismiss</button>
+            </div>
+            
+            <div class="w-full aspect-video bg-black/40 rounded-2xl overflow-hidden relative border border-white/10" id="reader"></div>
+            
+            <div class="space-y-3 w-full max-w-sm mx-auto">
+                <button id="snap-btn" onclick="captureVisualFrameForAI()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold py-3.5 rounded-xl text-xs uppercase tracking-wider shadow-md cursor-pointer transition transform active:scale-95">
+                    📷 Analyze Item In Frame
                 </button>
-                <button id="snap-btn" onclick="captureVisualFrameForAI()" class="hidden bg-emerald-500 text-white font-black text-xs px-4 py-2 rounded-xl shadow-sm cursor-pointer transition active:scale-95">
-                    📸 Analyze Item In Frame
-                </button>
-            </div>
-
-            <section id="scanner-view-box" class="bg-white p-4 rounded-3xl border border-slate-200 shadow-sm space-y-3">
-                <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">📷 Vision Feed</h2>
-                <div id="reader" class="overflow-hidden rounded-2xl bg-slate-900 aspect-video border border-slate-200 relative"></div>
-                <button onclick="stopScanner()" class="w-full bg-slate-100 text-slate-600 font-bold py-2 rounded-xl text-xs transition cursor-pointer">Terminate Video Feed</button>
-            </section>
-
-            <section id="result-page" class="hidden bg-white p-5 rounded-3xl border-2 border-slate-300 shadow-xl space-y-4 ios-slide-in">
-                <div class="flex justify-between items-start border-b border-slate-100 pb-3">
-                    <div>
-                        <h2 id="res-product-name" class="text-lg font-black text-slate-900 leading-tight">Product</h2>
-                        <p class="text-[9px] text-slate-400 uppercase font-bold mt-0.5">Nativ Bio-Safety Verdict</p>
-                    </div>
-                    <span id="res-badge" class="px-3 py-1 text-xs font-black tracking-wider rounded-lg shadow-sm">UNKNOWN</span>
-                </div>
-                <div class="space-y-2">
-                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-wide">Dynamic Profiler Analysis:</h3>
-                    <div id="res-feedback-container" class="space-y-1.5"></div>
-                </div>
-                <div class="space-y-2">
-                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-wide">Composition & Nutrition Breakdown:</h3>
-                    <p id="res-ingredients" class="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200 italic max-h-32 overflow-y-auto font-medium shadow-inner"></p>
-                </div>
-            </section>
-
-            <section class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm space-y-3">
-                <h2 class="text-xs font-black uppercase tracking-wider text-slate-400">⏳ History Log</h2>
-                <div id="results-history-list" class="space-y-2"></div>
-            </section>
-        </div>
-    </div>
-
-    <div id="chat-widget-panel" class="fixed bottom-4 right-4 z-50 flex flex-col items-end">
-        <button onclick="toggleiOSChatSheet()" class="bg-slate-900 text-white p-3.5 rounded-full shadow-2xl transition transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center">
-            <span class="text-xl">💬</span>
-        </button>
-        
-        <div id="chat-sheet" class="hidden w-[340px] h-[460px] bg-white rounded-3xl border border-slate-200/80 shadow-2xl mt-3 flex flex-col overflow-hidden translate-y-10 opacity-0 ios-sheet">
-            <div class="bg-slate-950 p-3 text-white flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <span class="text-base">🥗</span>
-                    <div class="flex flex-col">
-                        <span class="text-xs font-black tracking-wide">Health Assistant AI</span>
-                        <span class="text-[9px] text-emerald-400 font-bold uppercase tracking-wider">Online & Ready</span>
-                    </div>
-                </div>
-                <button onclick="toggleiOSChatSheet()" class="text-slate-400 hover:text-white text-xs p-1 font-bold">Close</button>
-            </div>
-            
-            <div id="chat-messages-container" class="flex-1 p-3 overflow-y-auto space-y-2.5 bg-slate-50 text-xs">
-                <div class="bg-slate-200 text-slate-800 p-2.5 rounded-2xl rounded-tl-none max-w-[85%] font-medium">
-                    Hello! Ask me anything about your diet goals, health conditions, or scanned product metrics.
-                </div>
-            </div>
-            
-            <div class="p-2 border-t border-slate-100 bg-white flex gap-1.5 items-center">
-                <input type="text" id="chat-user-input" onkeydown="if(event.key==='Enter') executeLiveChatQuery()" placeholder="Ask about meal plans, rules..." class="flex-1 p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium outline-none focus:border-emerald-500">
-                <button onclick="executeLiveChatQuery()" class="bg-emerald-500 text-white p-2.5 rounded-xl font-bold text-xs tracking-wide cursor-pointer transition active:scale-95">Send</button>
+                <p class="text-[10px] text-slate-400 text-center font-medium">Position item or barcode within target viewport framework and snap visual frame node.</p>
             </div>
         </div>
-    </div>
 
-    <canvas id="conversion-canvas" class="hidden"></canvas>
-    <div id="toast" class="hidden fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-slate-900 text-white font-bold text-xs px-4 py-3 rounded-xl shadow-xl z-50 transition border border-slate-700"></div>
+        <div id="analysis-report-sheet" class="hidden fixed inset-x-0 bottom-0 max-w-md mx-auto bg-white rounded-t-3xl border-t border-slate-200 shadow-2xl z-40 p-5 space-y-4 ios-sheet-rise">
+            <div class="flex justify-between items-start border-b border-slate-100 pb-3">
+                <div>
+                    <h3 id="res-product-name" class="text-lg font-black text-slate-900 tracking-tight">Product Identification</h3>
+                    <p class="text-[9px] text-slate-400 uppercase font-bold tracking-widest mt-0.5">Automated Clinical Diagnostics</p>
+                </div>
+                <span id="res-badge" class="px-3 py-1 text-xs font-extrabold tracking-wide rounded-lg shadow-xs">UNKNOWN</span>
+            </div>
+            <div class="space-y-1.5" id="res-feedback-container"></div>
+            <div class="space-y-1">
+                <h4 class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wide">Macro & Composition Data:</h4>
+                <p id="res-ingredients" class="text-xs text-slate-600 bg-slate-50 p-3.5 rounded-xl border border-slate-100 italic leading-relaxed font-medium max-h-24 overflow-y-auto"></p>
+            </div>
+            <button onclick="document.getElementById('analysis-report-sheet').classList.add('hidden')" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition cursor-pointer">Close Analysis</button>
+        </div>
 
-    <script>
-        let html5QrcodeScanner = null;
+        <nav class="fixed bottom-0 inset-x-0 max-w-md mx-auto bg-white/90 backdrop-blur-md border-t border-slate-100 h-20 px-6 flex justify-between items-center z-30 shadow-lg">
+            <button onclick="activateTab('profile')" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-900 transition-colors cursor-pointer w-14">
+                <span class="text-lg">👤</span>
+                <span class="text-[10px] font-bold">Profile</span>
+            </button>
+            <button onclick="activateTab('home')" class="flex flex-col items-center justify-center gap-1 text-slate-900 transition-colors cursor-pointer w-16 -translate-y-2">
+                <div class="p-3 bg-slate-900 text-white rounded-2xl shadow-md"><span class="text-lg block">🏠</span></div>
+                <span class="text-[10px] font-extrabold mt-0.5">Home</span>
+            </button>
+            <button onclick="activateTab('history')" class="flex flex-col items-center justify-center gap-1 text-slate-400 hover:text-slate-900 transition-colors cursor-pointer w-14">
+                <span class="text-lg">⏳</span>
+                <span class="text-[10px] font-bold">History</span>
+            </button>
+        </nav>
 
-        function showToast(msg) {
-            const t = document.getElementById('toast'); t.innerText = msg; t.classList.remove('hidden');
-            setTimeout(() => t.classList.add('hidden'), 2500);
-        }
-
-        // iOS SYSTEM MOTION TRANSITION HANDLERS
-        function switchToPage2(openCamera = false) {
-            const p1 = document.getElementById('page-1-dashboard');
-            const p2 = document.getElementById('page-2-analysis');
-            
-            p1.style.transform = "translateX(-100%)"; p1.style.opacity = "0";
-            setTimeout(() => {
-                p1.classList.add('hidden');
-                p2.classList.remove('hidden');
-                p2.style.transform = "translateX(0)"; p2.style.opacity = "1";
-                if (openCamera) {
-                    document.getElementById('scanner-view-box').classList.remove('hidden');
-                    startScanner();
-                } else {
-                    document.getElementById('scanner-view-box').classList.add('hidden');
-                    document.getElementById('snap-btn').classList.add('hidden');
-                }
-            }, 200);
-        }
-
-        function switchToPage1() {
-            stopScanner();
-            const p1 = document.getElementById('page-1-dashboard');
-            const p2 = document.getElementById('page-2-analysis');
-            
-            p2.style.transform = "translateX(100%)"; p2.style.opacity = "0";
-            setTimeout(() => {
-                p2.classList.add('hidden');
-                p1.classList.remove('hidden');
-                p1.style.transform = "translateX(0)"; p1.style.opacity = "1";
-            }, 200);
-        }
-
-        function executeSearchFromP1() {
-            const query = document.getElementById('manual-search-p1').value;
-            if(!query.trim()) return;
-            switchToPage2(false);
-            fetchProductData(query);
-        }
-
-        function toggleiOSChatSheet() {
-            const sheet = document.getElementById('chat-sheet');
-            if(sheet.classList.contains('hidden')) {
-                sheet.classList.remove('hidden');
-                setTimeout(() => {
-                    sheet.style.transform = "translateY(0)"; sheet.style.opacity = "1";
-                }, 10);
-            } else {
-                sheet.style.transform = "translateY(10px)"; sheet.style.opacity = "0";
-                setTimeout(() => sheet.classList.add('hidden'), 400);
-            }
-        }
-
-        // HARDWARE INTERACTION VIEWS
-        function startScanner() {
-            document.getElementById('result-page').classList.add('hidden');
-            html5QrcodeScanner = new Html5Qrcode("reader");
-            html5QrcodeScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 220, height: 140 } },
-                (txt) => { stopScanner(); fetchProductData(txt); }, () => {}
-            ).then(() => {
-                document.getElementById('snap-btn').classList.remove('hidden');
-            }).catch(() => alert("Camera block active. Deploy on GitHub Pages to access video layers."));
-        }
-
-        function stopScanner() { 
-            document.getElementById('snap-btn').classList.add('hidden');
-            if(html5QrcodeScanner) {
-                html5QrcodeScanner.stop().then(() => {
-                    document.getElementById('reader').innerHTML = ""; html5QrcodeScanner = null;
-                }).catch(()=>{});
-            } 
-        }
-
-        async function captureVisualFrameForAI() {
-            const video = document.querySelector('#reader video');
-            if (!video) { alert("Video track missing."); return; }
-            const canvas = document.getElementById('conversion-canvas');
-            canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-            const base64Image = canvas.toDataURL('image/jpeg').split(',')[1];
-            stopScanner();
-            executeGeminiVisionAnalysis(base64Image);
-        }
-
-        // INTELLIGENT COMPLIANCE ANALYSIS MATRIX
-        async function executeGeminiVisionAnalysis(base64Data) {
-            if(!window.GEMINI_API_KEY || window.GEMINI_API_KEY.includes("YOUR_GEMINI")) {
-                alert("Please add your Gemini API Key at line 33 of your index.html code."); return;
-            }
-            document.getElementById('result-page').classList.add('hidden');
-            showToast("AI vision calculating safety vectors...");
-
-            const age = document.getElementById('user-age').value;
-            const diet = document.getElementById('user-diet').value;
-            const flags = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(c => c.value).join(", ");
-            const notes = document.getElementById('custom-health-notes').value;
-
-            const prompt = `You are a strict clinical health diagnostic AI engine. Analyze this photo.
-            User Profile Parameters: Age group: ${age}, Dietary Objective Constraint: ${diet}, Checked Health Conditions/Allergies: [${flags}], Personal Custom Avoidance Terms: "${notes}".
-            Cross-reference ALL checklist rules, goals, and notes against the food identified in the image.
-            
-            Return ONLY a clean, valid JSON object following this format:
-            {
-               "productName": "Name of Product/Fruit/Vegetable Identified",
-               "verdict": "SAFE" or "CAUTION" or "AVOID",
-               "nutritionalDescription": "Summary of calories, macronutrients, and macro parameters.",
-               "reasons": ["Reason 1 why it fits or conflicts with conditions or rules", "Reason 2 based on active diet goal"]
-            }`;
-
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${window.GEMINI_API_KEY}`, {
-                    method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64Data } }] }] })
-                });
-                const data = await res.json();
-                let txt = data.candidates[0].content.parts[0].text.replace(/```json/g, "").replace(/```/g, "").trim();
-                const json = JSON.parse(txt);
-                renderAIReportCard(json.productName, json.verdict, json.nutritionalDescription, json.reasons);
-            } catch (err) { console.error(err); alert("Vision model timed out."); }
-        }
-
-        async function fetchProductData(query) {
-            if(!query.trim()) return;
-            document.getElementById('result-page').classList.add('hidden');
-            showToast("Processing text vector arrays...");
-
-            const age = document.getElementById('user-age').value;
-            const diet = document.getElementById('user-diet').value;
-            const flags = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(c => c.value).join(", ");
-            const notes = document.getElementById('custom-health-notes').value;
-
-            const textPrompt = `Analyze product "${query}". User Profile: Age: ${age}, Diet Goal: ${diet}, Conditions: [${flags}], Avoidance terms: "${notes}". Cross-reference everything. Return clean JSON code matching fields: productName, verdict (SAFE/CAUTION/AVOID), nutritionalDescription, reasons (array of strings). Do not use markdown backticks.`;
-
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${window.GEMINI_API_KEY}`, {
-                    method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: textPrompt }] }] })
-                });
-                const data = await res.json();
-                let txt = data.candidates[0].content.parts[0].text.replace(/```json/g, "").replace(/```/g, "").trim();
-                const json = JSON.parse(txt);
-                renderAIReportCard(json.productName, json.verdict, json.nutritionalDescription, json.reasons);
-            } catch(e) { console.error(e); alert("Text lookup error."); }
-        }
-
-        function renderAIReportCard(name, verdict, details, reasons) {
-            let badgeStyle = 'bg-emerald-100 text-emerald-800 border-emerald-300';
-            let mainBorder = 'border-emerald-300';
-            if (verdict === 'AVOID') { badgeStyle = 'bg-rose-100 text-rose-800 border-rose-300'; mainBorder = 'border-rose-400'; }
-            else if (verdict === 'CAUTION') { badgeStyle = 'bg-amber-100 text-amber-800 border-amber-300'; mainBorder = 'border-amber-400'; }
-
-            const container = document.getElementById('res-feedback-container'); container.innerHTML = "";
-            reasons.forEach(r => {
-                const alertStyle = verdict === 'AVOID' ? 'bg-rose-50/50 text-rose-700 border-rose-200' : (verdict === 'CAUTION' ? 'bg-amber-50/50 text-amber-700 border-amber-200' : 'bg-emerald-50/50 text-emerald-700 border-emerald-200');
-                container.innerHTML += `<p class="text-xs p-3 rounded-xl border leading-relaxed font-bold ${alertStyle}">${verdict === 'AVOID' ? '🛑' : (verdict === 'CAUTION' ? '⚠️' : '✅')} ${r}</p>`;
-            });
-
-            const resCard = document.getElementById('result-page');
-            resCard.className = `bg-white p-5 rounded-3xl border-2 shadow-xl space-y-4 ${mainBorder}`;
-            document.getElementById('res-product-name').innerText = name;
-            document.getElementById('res-badge').innerText = verdict === 'SAFE' ? 'USE IT' : verdict;
-            document.getElementById('res-badge').className = `px-3 py-1 text-xs font-black tracking-wider rounded-lg border ${badgeStyle}`;
-            document.getElementById('res-ingredients').innerText = details;
-            resCard.classList.remove('hidden'); resCard.scrollIntoView({ behavior: 'smooth' });
-            window.saveToCloudHistory(name, verdict);
-        }
-
-        // 💬 iOS COMPLIANT INTELLIGENT ASSISTANT CONVERSATION CORE ENGINE
-        async function executeLiveChatQuery() {
-            const inputField = document.getElementById('chat-user-input');
-            const promptStr = inputField.value.trim();
-            if(!promptStr) return;
-
-            const msgContainer = document.getElementById('chat-messages-container');
-            // Append User Chat Text node bubble dynamically
-            msgContainer.innerHTML += `
-                <div class="bg-emerald-500 text-white p-2.5 rounded-2xl rounded-tr-none max-w-[85%] font-bold self-end ml-auto text-right ios-slide-in">
-                    ${promptStr}
-                </div>`;
-            inputField.value = "";
-            msgContainer.scrollTop = msgContainer.scrollHeight;
-
-            const age = document.getElementById('user-age').value;
-            const diet = document.getElementById('user-diet').value;
-            const flags = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(c => c.value).join(", ");
-            const notes = document.getElementById('custom-health-notes').value;
-
-            const agentContextPrompt = `You are a premium lifestyle nutrition and health AI coach chat widget built natively inside HealthScan AI.
-            The user profile context is: Age: ${age}, Diet Goal: ${diet}, Active Conditions: [${flags}], Avoid notes: "${notes}".
-            Answer the user's question clearly, concisely, and supportively in less than 3 paragraphs based on their parameters.
-            User Question: "${promptStr}"`;
-
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${window.GEMINI_API_KEY}`, {
-                    method: "POST", headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: agentContextPrompt }] }] })
-                });
-                const resData = await res.json();
-                const replyText = resData.candidates[0].content.parts[0].text;
-                
-                // Append AI Response Bubble node natively
-                msgContainer.innerHTML += `
-                    <div class="bg-white text-slate-800 p-2.5 rounded-2xl rounded-tl-none max-w-[85%] font-medium border border-slate-200/60 shadow-sm ios-slide-in">
-                        ${replyText}
-                    </div>`;
-                msgContainer.scrollTop = msgContainer.scrollHeight;
-            } catch(e) {
-                msgContainer.innerHTML += `<div class="text-rose-500 text-[10px] font-bold">API handshake failed. Check network configuration link layers.</div>`;
-            }
-        }
-    </script>
-</body>
-</html>
+        <div id="floating-chat-container" class="fixed bottom-24 right-4 max-w-md z-40 flex flex-col items-end">
+            <button onclick="toggleFloatingChatSheet()" class="bg-slate-900 text-white p-3.5 rounded-full shadow-xl transition transform hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center">
+                <span class="text-xl">💬</span>
+            </button>
+            <div id="chat-sheet" class="hidden w-[330px] h-[440px] bg-white rounded-2xl border border-slate-200 shadow-2xl mt-2.5 flex flex-col overflow-hidden ios-sheet-rise">
+                <div class="bg-slate-900 p-3.5 text-white flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <span class="text-base">🥗</span>
+                        <div class="flex flex-col">
+                            <span class="text-xs font-bold tracking-tight">Mei-scan Assistant AI</spa
