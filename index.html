@@ -45,12 +45,6 @@
 
         window.GEMINI_API_KEY = "AIzaSyC2dz774uwQFfhBPCkQqGD99Bi0Ce97fkc";
 
-        window.loginWithGoogle = async () => {
-            try { await signInWithPopup(auth, provider); } catch (error) { alert("Login Failed: " + error.message); }
-        };
-
-        window.logoutUser = () => { signOut(auth).then(() => { location.reload(); }); };
-
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -80,7 +74,7 @@
                     conditions: conditions,
                     customNotes: customNotes
                 }, { merge: true });
-                showToast("Profile settings synchronized securely.");
+                showToast("Profile metrics synchronized securely.");
             } catch (err) { console.error(err); }
         };
 
@@ -193,7 +187,7 @@
                 <span class="text-slate-400 group-hover:text-white transition-colors text-lg">→</span>
             </button>
         </main>
-        <div id="health-situation-view" class="hidden flex-1 p-4 space-y-4 ios-page-slide">
+                <div id="health-situation-view" class="hidden flex-1 p-4 space-y-4 ios-page-slide">
             <button onclick="closeSubPage()" class="bg-white text-slate-700 font-bold text-xs px-3 py-2 rounded-xl border border-slate-200 shadow-xs cursor-pointer">
                 ← Back to Home
             </button>
@@ -440,7 +434,7 @@
             const prompt = `Analyze item snapshot. User parameters: Age: ${age}, Strategy: ${diet}, Flags: [${flags}], Custom Avoids: "${notes}". Return JSON string only: {"productName": "Item Name", "verdict": "SAFE" or "CAUTION" or "AVOID", "nutritionalDescription": "Macro analytics data breakdown text.", "reasons": ["Reason 1", "Reason 2"]}`;
 
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${window.GEMINI_API_KEY}`, {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${window.GEMINI_API_KEY}`, {
                     method: "POST", headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }, { inlineData: { mimeType: "image/jpeg", data: base64Data } }] }] })
                 });
@@ -461,7 +455,7 @@
             const textPrompt = `Evaluate "${query}". Context: Age: ${age}, Diet: ${diet}, Flags: [${flags}], Extra: "${notes}". Return clean raw JSON with keys: productName, verdict (SAFE/CAUTION/AVOID), nutritionalDescription, reasons (array of strings). Do not use markdown wrappers.`;
 
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${window.GEMINI_API_KEY}`, {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${window.GEMINI_API_KEY}`, {
                     method: "POST", headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ contents: [{ parts: [{ text: textPrompt }] }] })
                 });
@@ -511,7 +505,7 @@
             const context = `You are the chat unit inside Mei-scan AI app. Profile metrics: Age: ${age}, Diet: ${diet}, Flags: [${flags}], Avoid: "${notes}". Answer clearly under 3 paragraphs. Question: "${q}"`;
 
             try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${window.GEMINI_API_KEY}`, {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${window.GEMINI_API_KEY}`, {
                     method: "POST", headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ contents: [{ parts: [{ text: context }] }] })
                 });
